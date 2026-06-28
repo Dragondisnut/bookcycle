@@ -618,7 +618,7 @@ def render_sidebar():
 # ─────────────────────────────────────────────────────────────
 # MODUL 4 – UI UTAMA (Hasil Rekomendasi)
 # ─────────────────────────────────────────────────────────────
-def render_book_card(idx: int, row: pd.Series):
+def render_book_card(idx: int, row: pd.Series, tab_prefix: str = ""):
     """
     Render satu kartu buku dengan info lengkap dan tombol interaksi.
     """
@@ -663,12 +663,12 @@ def render_book_card(idx: int, row: pd.Series):
     # Tombol interaksi — menggunakan kolom agar rapi
     col_a, col_b, col_c = st.columns([1, 1, 4])
     with col_a:
-        if st.button("🔖 Simpan", key=f"klik_{idx}_{row['title'][:10]}"):
+        if st.button("🔖 Simpan", key=f"{tab_prefix}klik_{idx}_{row['title'][:10]}"):
             handle_interaction(row, "klik")
             st.toast(f"Buku disimpan! Bobot diperbarui 📊", icon="🔖")
             st.rerun()
     with col_b:
-        if st.button("🛒 Beli", key=f"beli_{idx}_{row['title'][:10]}"):
+       if st.button("🛒 Beli", key=f"{tab_prefix}beli_{idx}_{row['title'][:10]}"):
             handle_interaction(row, "beli")
             st.toast(f"Pembelian tercatat! Bobot diperbarui 📊", icon="🛒")
             st.rerun()
@@ -798,15 +798,14 @@ def main():
         st.caption(f"Menampilkan {len(display_df)} buku")
 
         for i, (_, row) in enumerate(display_df.iterrows()):
-            render_book_card(i, row)
+            render_book_card(i, row, tab_prefix="all_")
 
     with tab_top:
         st.markdown('<div class="section-title">🏆 Top 10 Buku Terpersonalisasi</div>',
                     unsafe_allow_html=True)
         top10 = scored_df.head(10)
         for i, (_, row) in enumerate(top10.iterrows()):
-            render_book_card(i, row)
-
+            render_book_card(i, row, tab_prefix="top_")
     with tab_analytics:
         render_analytics(scored_df)
 
